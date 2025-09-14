@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="mk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кондициски тренинг Пајак- Настап 21:00</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif; }
+    body { background:#0a0a0a; color:#f5c518; overflow-x:hidden; }
+
+    /* Intro */
+    #intro { position:fixed; top:0; left:0; width:100%; height:100%; background:linear-gradient(135deg,#000 0%,#000 100%); display:flex; justify-content:center; align-items:center; z-index:9999; }
+    #intro img { width:300px; opacity:0; animation:fadeIn 2s forwards; }
+    #intro .spider-logo { animation-delay:2s; }
+    @keyframes fadeIn { to { opacity:1; } }
+    @keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+
+    /* Demo Popup */
+    #demoPopup { position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); display:flex; justify-content:center; align-items:center; z-index:10000; color:#fff; text-align:center; padding:20px; font-size:1.2rem; border-radius:10px; display:none; }
+    #demoPopup button { margin-top:20px; padding:10px 20px; font-weight:bold; background:#f5c518; border:none; border-radius:8px; cursor:pointer; }
+
+    /* Header */
+    header { background:#000; padding:20px; text-align:center; border-bottom:2px solid #f5c51833; }
+    header h1 { font-size:2rem; color:#fff; letter-spacing:2px; text-transform:uppercase; }
+
+    /* Navigation */
+    nav { background:#000; padding:15px 20px; display:flex; justify-content:center; align-items:center; position:sticky; top:0; z-index:10; border-bottom:2px solid #f5c51833; }
+    .nav-links { display:flex; gap:40px; justify-content:center; align-items:center; }
+    .nav-links a { color:#f5c518; text-decoration:none; font-weight:bold; font-size:1.1rem; position:relative; transition:0.3s; }
+    .nav-links a::after { content:''; position:absolute; bottom:-5px; left:0; width:0; height:2px; background:#f5c518; transition:0.3s; }
+    .nav-links a:hover { color:#fff; }
+    .nav-links a:hover::after { width:100%; }
+
+    /* Hamburger Menu */
+    .hamburger { display:none; flex-direction:column; cursor:pointer; position:absolute; right:20px; }
+    .hamburger div { width:25px; height:3px; background:#f5c518; margin:4px; transition:0.3s; }
+    .hamburger.active div:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+    .hamburger.active div:nth-child(2) { opacity:0; }
+    .hamburger.active div:nth-child(3) { transform:rotate(-45deg) translate(6px,-6px); }
+    .nav-active { display:flex !important; flex-direction:column; text-align:center; position:absolute; top:60px; left:0; width:100%; background:#000; padding:20px; gap:20px; }
+
+    /* Sections */
+    section { padding:50px 20px; max-width:1000px; margin:auto; }
+    h2 { font-size:1.8rem; margin-bottom:20px; border-left:5px solid #f5c518; padding-left:10px; }
+
+    /* Calendar */
+    .calendar { background:#111; padding:30px; border-radius:15px; box-shadow:0 0 20px #f5c51833; transition:0.3s; }
+    .calendar:hover { transform:scale(1.02); }
+    label { display:block; margin-top:10px; }
+    input, button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; font-size:1rem; }
+    input { background:#222; color:#f5c518; }
+    button { background:linear-gradient(90deg, #f5c518, #d4af37); color:#000; font-weight:bold; cursor:pointer; }
+    button:hover { background:#fff; }
+    li { background:#222; padding:10px; border-radius:8px; margin:5px 0; }
+
+    /* Cards */
+    .card { background:#111; padding:25px; margin:20px 0; border-radius:15px; box-shadow:0 0 15px #f5c51822; transition:0.3s; }
+    .card:hover { transform:translateY(-5px); box-shadow:0 0 25px #f5c51855; }
+
+    /* Grid Cards */
+    .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap:20px; }
+    .grid-card { background: linear-gradient(135deg,#1a1a1a,#111); padding:20px; border-radius:15px; box-shadow:0 0 15px #f5c51822; transition:0.3s; position:relative; }
+    .grid-card:hover { transform:translateY(-5px); box-shadow:0 0 25px #f5c51855; }
+    .grid-card i { font-size:2rem; margin-bottom:10px; color:#f5c518; }
+    .grid-card h3 { margin-bottom:10px; color:#fff; }
+    .time-tag { position:absolute; top:15px; right:15px; background:#f5c518; color:#000; padding:5px 10px; border-radius:8px; font-weight:bold; font-size:0.9rem; }
+
+    /* Progress Bars */
+    .progress-bar { background:#222; border-radius:8px; overflow:hidden; margin:10px 0; }
+    .progress-fill { padding:8px 0; text-align:center; color:#000; font-weight:bold; border-radius:8px; background:linear-gradient(90deg,#f5c518,#d4af37); box-shadow:0 0 10px #f5c51855; }
+
+
+
+
+
+
+
+
+
+.card-video {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 15px;
+  box-shadow: 0 4px 15px rgba(245,197,24,0.3);
+}
+
+.meal-img {
+  width: 100%;            /* Сликата да ја пополнува ширината на картичката */
+  height: 180px;          /* Фиксна висина за униформен изглед */
+  object-fit: cover;      /* Сликата да се прикаже правилно без деформација */
+  border-radius: 15px;    /* Меки рабови за убав изглед */
+  margin: 10px 0;         /* Мал простор над и под сликата */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Сенка за длабочина */
+  transition: transform 0.2s;
+}
+
+.meal-img:hover {
+  transform: scale(1.03); /* Леко зголемување при hover */
+}
+
+
+ /* Chat */
+    #aiChatContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      max-height: 400px;
+      background: #111;
+      color: #f5c518;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #f5c51844;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+      z-index: 9999;
+
+
+
+    }
+    #aiChatHeader { background: #000; padding: 10px; text-align: center; font-weight: bold; cursor: pointer; }
+    #aiChatBody { flex: 1; padding: 10px; overflow-y: auto; }
+    .aiMessage { margin: 5px 0; padding: 8px 10px; border-radius: 10px; }
+    .userMsg { background: #f5c518; color: #000; align-self: flex-end; }
+    .botMsg { background: #222; color: #f5c518; align-self: flex-start; }
+    #aiChatInput { border: none; padding: 10px; font-size: 1rem; border-top: 1px solid #f5c51833; background: #222; color: #f5c518; outline: none; }
+
+    #supplements {
+      padding: 50px 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+
+    #supplements h2 {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #f5c518;
+    }
+
+    .timeline {
+      position: relative;
+      margin: 0 auto;
+      padding-left: 40px;
+      max-width: 600px;
+      border-left: 3px solid #f5c518;
+    }
+
+    .timeline-item {
+      margin-bottom: 30px;
+      position: relative;
+    }
+
+    .timeline-time {
+      position: absolute;
+      left: -80px;
+      top: 0;
+      width: 60px;
+      text-align: right;
+      font-weight: bold;
+      color: #f5c518;
+    }
+
+    .timeline-content {
+      background: #111;
+      border: 1px solid #f5c518;
+      border-radius: 10px;
+      padding: 15px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .timeline-content:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(245,197,24,0.3);
+    }
+
+    .timeline-content h3 {
+      margin-top: 0;
+      color: #f5c518;
+    }
+
+    #supplements .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+      gap: 20px;
+    }
+
+    #supplements .grid-card {
+      background: linear-gradient(135deg, #1a1a1a, #111);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #f5c51822;
+      transition: 0.3s;
+      position: relative;
+      cursor: pointer;
+    }
+
+    #supplements .grid-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px #f5c51855;
+    }
+
+    #supplements .grid-card i {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #f5c518;
+    }
+
+    #supplements .grid-card h3 {
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    #supplements .grid-card p {
+      margin-bottom: 5px;
+      color: #f5c518cc;
+    }
+
+    /* Tooltip */
+    #supplements .grid-card::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f5c518;
+      color: #000;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    #supplements .grid-card:hover::after {
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      /* Навигација */
+      .nav-links { 
+        display: none; 
+        flex-direction: column; 
+        gap: 20px; 
+      }
+      .hamburger { 
+        display: flex; 
+      }
+
+      /* Лоундинг скринот - логата на мобилни */
+      #intro div {
+        flex-direction: column; /* логата една под друга */
+        gap: 20px; /* растојание помеѓу логата */
+        align-items: center;
+        padding: 10px;
+      }
+
+      #intro img {
+        width: 70%; /* ќе се прилагодуваат на екранот */
+        max-width: 250px; /* ограничување за премногу големи логота */
+        animation: fadeIn 1.5s forwards; /* побрза анимација на мобилен */
+      }
+
+      /* Секции и картички */
+      section { padding: 30px 15px; }
+      .grid { grid-template-columns: 1fr; } /* картичките една под друга */
+    }
+
+    #aiChatContainer {
+      width: 200px !important;      /* Помал прозорец */
+      max-height: 250px !important; /* Поудобно за мобилен */
+      bottom: 20px !important;
+      right: 40px !important;
+    }
+    #aiChatHeader {
+      font-size: 0.85rem;
+      padding: 6px;
+    }
+    #aiChatBody {
+      font-size: 0.85rem;
+      padding: 6px;
+    }
+    #aiChatInput {
+      font-size: 0.85rem;
+      padding: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- AI Chat Button & Popup -->
+<div id="aiChatContainer">
+<div id="aiChatHeader">Chat со тренер</div>
+ <div id="aiChatBody"></div>
+<input type="text" id="aiChatInput" placeholder="Напиши прашање..." />
+</div>
+
+<!-- Intro -->
+  <div id="intro">
+    <div style="display:flex; gap:40px; align-items:center;">
+      <img src="https://i.ibb.co/DHBXrsQP/1000026436.png" alt="Лого Кирил" class="intro-logo">
+      <img src="https://i.ibb.co/3wjSnrb/20250912-013228-0000.png"  alt="Лого Пајак" class="intro-logo spider-logo">
+    </div>
+  </div>
+
+  <!-- Demo Popup -->
+  <div id="demoPopup">
+    <div>
+      <h2>Демо верзија на апликацијата</h2>
+      <p>Ова е бета верзија на апликацијата и служи само за прикажување на идејата и функционалностите.
+Некои функции можеби не се целосно стабилни и можат да се појават багови или ограничувања.
+Откако Пајак ќе се согласи, ќе добие пристап до целата функција, вклучувајќи и лајв чат со мене.
+Апликацијата во оваа фаза е за тестирање и преглед, а не за редовна употреба.</p>
+      <button onclick="closePopup()">Продолжи</button>
+    </div>
+  </div>
+
+ <!-- Header -->
+  <header><h1>Кондициски тренинг Пајак</h1></header>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="hamburger" id="hamburger"><div></div><div></div><div></div></div>
+    <div class="nav-links" id="navLinks">
+      <a href="#calendar">Календар</a>
+      <a href="#nutrition">Исхрана</a>
+      <a href="#workouts">Тренинг</a>
+      <a href="#progress">Прогрес</a>
+      <a href="#tips">Совети</a>
+    </div>
+  </nav>
+
+  <!-- Calendar -->
+  <section id="calendar">
+    <h2>Календар на настапи</h2>
+    <div class="calendar">
+      <label for="event">Настап:</label>
+      <input type="text" id="event" placeholder="Пример: Концерт во Скопје">
+      <label for="date">Датум:</label>
+      <input type="date" id="date">
+      <label for="time">Час:</label>
+      <input type="time" id="time">
+      <button onclick="addEvent()">Додај настап</button>
+      <h3 style="margin-top:20px;">Твоите настапи:</h3>
+      <ul id="eventList"></ul>
+    </div>
+  </section>
+
+  <!-- Nutrition Section -->
+  <section id="nutrition">
+    <h2>Целодневна пример исхрана за настап во 21:00</h2>
+    <div class="grid">
+      <!-- Појадок -->
+      <div class="grid-card">
+        <span class="time-tag">08:00</span>
+        <i class="fas fa-apple-alt"></i>
+        <h3>Појадок</h3>
+        <p><strong>Што:</strong> Овесна каша со банана + 25g whey протеин шејк</p>
+        <p><strong>Зошто:</strong> Јаглехидрати за енергија, протеин за мускулна маса.</p>
+  <img src="https://i.ibb.co/b5CBD7rd/ovesna-kasa.jpg" alt="ovesna-kasa" alt="Појадок" class="meal-img">
+      </div>
+      <!-- Ужина -->
+      <div class="grid-card">
+        <span class="time-tag">10:00</span>
+        <i class="fas fa-apple-alt"></i>
+        <h3>Ужина</h3>
+        <p><strong>Што:</strong> Јаболко + 10 бадеми</p>
+        <p><strong>Зошто:</strong> Бавни јаглехидрати + здрави масти за стабилен шеќер.</p>
+<img src="https://i.ibb.co/7tTkGRhG/50882d48-e54b-4c74-9b2a-f2b7570e7c9a-1.jpg" alt="ovesna-kasa" alt="Појадок" class="meal-img">
+
+      </div>
+      <!-- Ручек -->
+      <div class="grid-card">
+        <span class="time-tag">12:30</span>
+        <i class="fas fa-hamburger"></i>
+        <h3>Ручек</h3>
+        <p><strong>Што:</strong> Пилешко филе 150g, ориз 100g, брокула/спанаќ, 500ml вода</p>
+        <p><strong>Зошто:</strong> Протеини и бавни јаглехидрати за долготрајна енергија.</p>
+<img src="https://i.ibb.co/dJ6Q9rDt/grilled-chicken-steak.png" alt="ovesna-kasa" alt="Појадок" class="meal-img">
+
+
+      </div>
+      <!-- Попладневна ужина -->
+      <div class="grid-card">
+        <span class="time-tag">15:30</span>
+        <i class="fas fa-carrot"></i>
+        <h3>Попладневна ужина</h3>
+        <p><strong>Што:</strong> Грчки јогурт 150g + 1 лажица мед + малку овошје</p>
+        <p><strong>Зошто:</strong> Лесна протеинска ужина за стабилна енергија.</p>
+<img src="https://i.ibb.co/sYkq4Q8/d8ba26fe-d7bd-408e-b32a-63639c619804.jpg" alt="ovesna-kasa" alt="Појадок" class="meal-img">
+
+      </div>
+      <!-- Лесен оброк пред настап -->
+      <div class="grid-card">
+        <span class="time-tag">18:30</span>
+        <i class="fas fa-utensils"></i>
+        <h3>Лесен оброк пред настап</h3>
+        <p><strong>Што:</strong> 2 тост леба со путер од кикирики + 1 банана + 300ml вода</p>
+        <p><strong>Зошто:</strong> Брзи јаглехидрати и мала количина протеин за моментална енергија.</p>
+<img src="https://i.ibb.co/xSndg1dM/20250914-140151.jpg" alt="ovesna-kasa" alt="Појадок" class="meal-img">
+
+      </div>
+      <!-- Брз snack -->
+      <div class="grid-card">
+        <span class="time-tag">20:15</span>
+        <i class="fas fa-bolt"></i>
+        <h3>Брз snack (45 минути пред настап)</h3>
+        <p><strong>Што:</strong> 1 банана + 1 лажица мед + 1 scoop креатин</p>
+        <p><strong>Зошто:</strong> Брз енергетски удар и подобра издржливост на сцената.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workouts Section -->
+  <section id="workouts">
+    <h2>Целодневен пример тренинг за настап</h2>
+    <div class="grid">
+      <div class="grid-card">
+        <span class="time-tag">08:30</span>
+        <i class="fas fa-walking"></i>
+        <h3>Лесна раздвижување</h3>
+        <p><strong>Зошто:</strong> Прва активација на телото, циркулација и енергија.</p>
+        <ul>
+          <li>5 минути лесно трчање на место</li>
+          <li>10 минути стречинг за цело тело</li>
+        </ul>
+      </div>
+      <div class="grid-card">
+        <span class="time-tag">17:30</span>
+        <i class="fas fa-lungs"></i>
+        <h3>Дијафрагмално дишење</h3>
+        <p><strong>Зошто:</strong> Подобрување на контрола на гласот и смирување на нервоза.</p>
+        <ul>
+          <li>Box Breathing 4-4-4-4: 5 кругови</li>
+          <li>Длабоки вдишувања со дијафрагма: 10 повторувања</li>
+          <li>Breath holds: 5 пати по 15 сек.</li>
+        </ul>
+      </div>
+      <div class="grid-card">
+        <span class="time-tag">20:00</span>
+        <i class="fas fa-dumbbell"></i>
+        <h3>Мини активација backstage</h3>
+        <p><strong>Зошто:</strong> Подигање на срцев ритам, циркулација и „на пумпа“ изглед пред настап.</p>
+        <ul>
+          <li>3x15 склекови</li>
+
+ <iframe class="card-video" src="https://player.cloudinary.com/embed/?cloud_name=dqpchzdcf&public_id=20250913_215439_qok6fw&profile=cld-default " frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+  </ul>
+          <li>3x30 сек. jumping jacks</li>
+  
+<iframe class="card-video" src="https://player.cloudinary.com/embed/?cloud_name=dqpchzdcf&public_id=20250913_220619_mmhhnz&profile=cld-default" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+
+
+
+  </ul>
+          <li>2x15 Squat </li>
+<iframe class="card-video" src="https://player.cloudinary.com/embed/?cloud_name=dqpchzdcf&public_id=20250913_220009_ledm3n&profile=cld-default" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+          <li>2x20 сек. mountain climbers</li>
+        </ul>
+
+  <iframe class="card-video" src="https://player.cloudinary.com/embed/?cloud_name=dqpchzdcf&public_id=20250913_215810_vukxoq&profile=cld-default" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+      </div>
+      <div class="grid-card">
+        <span class="time-tag">01:15</span>
+        <i class="fas fa-heartbeat"></i>
+        <h3>После настап – опоравување</h3>
+        <p><strong>Зошто:</strong> Брзо надополнување на течности и хранливи материи.</p>
+        <ul>
+          <li>500ml минерална вода или електролити</li>
+          <li>30g whey протеин шејк</li>
+          <li>Лесна вечера: омлет/туна салата</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+<section id="supplements">
+  <h2>Суплементи за настапи</h2>
+  <div class="grid">
+    <div class="grid-card" data-tooltip="Помага да се издржат долги настапи.">
+      <i class="fas fa-dumbbell"></i>
+      <h3>Креатин</h3>
+      <p><strong>Време:</strong> Пред тренинг</p>
+      <p><strong>Доза:</strong> 5g</p>
+    </div>
+    <div class="grid-card" data-tooltip="Брзо регенерира мускулите и помага за закрепнување.">
+      <i class="fas fa-bolt"></i>
+      <h3>Whey протеин</h3>
+      <p><strong>Време:</strong> После настап/тренинг</p>
+      <p><strong>Доза:</strong> 30g</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува имунитет и енергија за целиот ден.">
+      <i class="fas fa-capsules"></i>
+      <h3>Мултивитамини</h3>
+      <p><strong>Време:</strong> Наутро со појадок</p>
+      <p><strong>Доза:</strong> 1 таблетa</p>
+    </div>
+    <div class="grid-card" data-tooltip="Го одржува балансот на течности и спречува замор.">
+      <i class="fas fa-tint"></i>
+      <h3>Електролити</h3>
+      <p><strong>Време:</strong> За време на настап</p>
+      <p><strong>Доза:</strong> 500ml раствор</p>
+    </div>
+    <div class="grid-card" data-tooltip="Силен антиоксиданс, помага да се обнови телото.">
+      <i class="fas fa-lemon"></i>
+      <h3>Витамин C</h3>
+      <p><strong>Време:</strong> Наутро или после настап</p>
+      <p><strong>Доза:</strong> 500mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува нервен систем и енергија.">
+      <i class="fas fa-brain"></i>
+      <h3>Витамин B комплекс</h3>
+      <p><strong>Време:</strong> Наутро со појадок</p>
+      <p><strong>Доза:</strong> 1 таблетa</p>
+    </div>
+    <div class="grid-card" data-tooltip="Помага за мускулна регенерација и одржување на енергија.">
+      <i class="fas fa-fish"></i>
+      <h3>Omega-3</h3>
+      <p><strong>Време:</strong> После оброк</p>
+      <p><strong>Доза:</strong> 2 капсули</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува концентрација и енергија за настапи.">
+      <i class="fas fa-bolt"></i>
+      <h3>Кофеин</h3>
+      <p><strong>Време:</strong> 30 минути пред настап</p>
+      <p><strong>Доза:</strong> 100–200mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Подобрува концентрација и намалува замор.">
+      <i class="fas fa-leaf"></i>
+      <h3>Л-Теанин</h3>
+      <p><strong>Време:</strong> Пред настап/тренинг</p>
+      <p><strong>Доза:</strong> 200mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Помага за здравјето на зглобовите и ткивата.">
+      <i class="fas fa-hand-holding-medical"></i>
+      <h3>Глукозамин</h3>
+      <p><strong>Време:</strong> Наутро</p>
+      <p><strong>Доза:</strong> 1500mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Го поддржува варењето и апсорпцијата на хранливи материи.">
+      <i class="fas fa-stomach"></i>
+      <h3>Пробиотици</h3>
+      <p><strong>Време:</strong> Наутро пред оброк</p>
+      <p><strong>Доза:</strong> 1 капсула</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува јачина на коски и мускулна функција.">
+      <i class="fas fa-bone"></i>
+      <h3>Витамин D3</h3>
+      <p><strong>Време:</strong> Наутро со масти</p>
+      <p><strong>Доза:</strong> 2000 IU</p>
+    </div>
+    <div class="grid-card" data-tooltip="Помага за регенерација на мускули и имунитет.">
+      <i class="fas fa-drumstick-bite"></i>
+      <h3>Глутамин</h3>
+      <p><strong>Време:</strong> После тренинг/настап</p>
+      <p><strong>Доза:</strong> 5g</p>
+    </div>
+       <div class="grid-card" data-tooltip="Помага да се одржи енергија и издржливост.">
+      <i class="fas fa-bolt"></i>
+      <h3>Beta-Alanine</h3>
+      <p><strong>Време:</strong> Пред тренинг</p>
+      <p><strong>Доза:</strong> 3–6g</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува здравје на зглобови и кожа.">
+      <i class="fas fa-pills"></i>
+      <h3>Колаген</h3>
+      <p><strong>Време:</strong> После оброк</p>
+      <p><strong>Доза:</strong> 10g</p>
+    </div>
+    <div class="grid-card" data-tooltip="Поддржува метаболизам и енергија за долги настапи.">
+      <i class="fas fa-fire"></i>
+      <h3>L-Carnitine</h3>
+      <p><strong>Време:</strong> Пред настап/тренинг</p>
+      <p><strong>Доза:</strong> 500–1000mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Помага да се одржи енергија и концентрација на сцената.">
+      <i class="fas fa-brain"></i>
+      <h3>Acetyl-L-Carnitine</h3>
+      <p><strong>Време:</strong> Пред настап</p>
+      <p><strong>Доза:</strong> 500mg</p>
+    </div>
+    <div class="grid-card" data-tooltip="Ги одржува нивоата на енергија и концентрација.">
+      <i class="fas fa-lemon"></i>
+      <h3>Vitamin E</h3>
+      <p><strong>Време:</strong> После оброк</p>
+      <p><strong>Доза:</strong> 400 IU</p>
+    </div>
+     </div>
+</section>
+
+  <!-- Progress Tracker -->
+  <section id="progress">
+    <h2>Прогрес</h2>
+    <div class="card">
+      <canvas id="progressChart" width="400" height="200"></canvas>
+      <h3>Енергија</h3>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%;">85%</div></div>
+      <h3>Издржливост</h3>
+      <div class="progress-bar"><div class="progress-fill" style="width:72%;">72%</div></div>
+    </div>
+  </section>
+
+  <!-- Tips Section -->
+  <section id="tips">
+    <h2>Совети за одржување на енергија на сцената</h2>
+    <div class="card">
+      <ul>
+        <li> Позитивна визуализација: замисли го настапот како успешен и динамичен</li>
+        <li>Пиј течности редовно, но мали порции за да избегнеш чувство на тежина.</li>
+        <li>Диши длабоко и користи дијафрагмално дишење за контрола на гласот.</li>
+        <li>Малите snacks (банана, мед) се дозволени за брза енергија.</li>
+        <li>Одржувај ритам со движење на телото за циркулација.</li>
+        <li>Избегнувај премногу шеќер или пржена храна веднаш пред настап.</li>
+         <li>Ако е можно, избегнувај пушење 1–2 часа пред настап.</li>
+
+
+
+
+      </ul>
+    </div>
+  </section>
+
+  <script>
+
+  // AI Chat
+  const chatContainer = document.getElementById('aiChatContainer');
+  const chatBody = document.getElementById('aiChatBody');
+  const chatInput = document.getElementById('aiChatInput');
+  const chatHeader = document.getElementById('aiChatHeader');
+
+  let chatOpen = true;
+
+  chatHeader.addEventListener('click', () => {
+    chatOpen = !chatOpen;
+    chatBody.style.display = chatOpen ? 'block' : 'none';
+    chatInput.style.display = chatOpen ? 'block' : 'none';
+  });
+
+  chatInput.addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter' && chatInput.value.trim() !== '') {
+      const userMessage = chatInput.value.trim();
+      appendMessage(userMessage, 'user');
+      chatInput.value = '';
+      await getAIResponse(userMessage);
+    }
+  });
+
+  function appendMessage(msg, type) {
+    const div = document.createElement('div');
+    div.classList.add('aiMessage', type === 'user' ? 'userMsg' : 'botMsg');
+    div.textContent = msg;
+    chatBody.appendChild(div);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  async function getAIResponse(message) {
+    appendMessage('…', 'bot'); // времено додека се добие одговор
+    const botDiv = chatBody.lastChild;
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' // стави ја тука твојата API key
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: message }],
+          max_tokens: 200
+        })
+      });
+      const data = await response.json();
+      botDiv.textContent = data.choices[0].message.content.trim();
+    } catch (error) {
+      botDiv.textContent = "Се појави грешка. Обиди се повторно.";
+      console.error(error);
+    }
+  }
+
+  // Intro & Demo
+  window.onload = () => {
+    setTimeout(() => {
+      const intro = document.getElementById('intro');
+      intro.style.animation = "fadeOut 1s forwards";
+
+      // после анимацијата тргни го intro од екран
+      setTimeout(() => {
+        intro.style.display = "none";
+      }, 1000);
+    }, 3000);
+
+    setTimeout(() => {
+      document.getElementById('demoPopup').style.display = 'flex';
+    }, 3500);
+  };
+
+  function closePopup() {
+    document.getElementById('demoPopup').style.display = 'none';
+  }
+
+  // Calendar
+  function addEvent() {
+    const event = document.getElementById('event').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    if (event && date && time) {
+      const li = document.createElement('li');
+      li.textContent = `${event} - ${date} во ${time}`;
+      document.getElementById('eventList').appendChild(li);
+      document.getElementById('event').value = '';
+      document.getElementById('date').value = '';
+      document.getElementById('time').value = '';
+    } else {
+      alert("Внеси настап, датум и час!");
+    }
+  }
+
+  // Суплементи со tooltip
+  const supplementInfo = {
+    whey: "Whey протеин – помага за регенерација на мускулите и се зема после тренинг или настап.",
+    creatine: "Креатин – ја зголемува издржливоста и силата, се зема пред тренинг или настап.",
+    bcaas: "BCAA – аминокиселини за намалување на замор и помош при регенерација.",
+    vitamins: "Витамини – општа енергија и имунитет, може секое утро."
+  };
+
+  function showTooltip() {
+    const select = document.getElementById('supplementSelect');
+    const tooltip = document.getElementById('tooltip');
+    const value = select.value;
+    tooltip.textContent = supplementInfo[value] || "Избери суплемент за објаснување";
+  }
+
+  // Зачувување на суплементи
+  function loadSupplements() {
+    const saved = JSON.parse(localStorage.getItem('supplements')) || [];
+    const list = document.getElementById('supplementList');
+    if (list) {
+      list.innerHTML = '';
+      saved.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = `${s.name} – ${s.time}`;
+        list.appendChild(li);
+      });
+    }
+  }
+
+  function addSupplement() {
+    const name = document.getElementById('supplementName').value.trim();
+    const dose = document.getElementById('supplementDose').value.trim();
+    const time = document.getElementById('supplementTime').value;
+    const why = document.getElementById('supplementWhy').value.trim();
+
+    if(name && dose && time && why){
+      const li = document.createElement('li');
+      li.textContent = `${time} - ${name} (${dose}): ${why}`;
+      document.getElementById('supplementList').appendChild(li);
+
+      // Исчисти полјата
+      document.getElementById('supplementName').value = '';
+      document.getElementById('supplementDose').value = '';
+      document.getElementById('supplementTime').value = '';
+      document.getElementById('supplementWhy').value = '';
+    } else {
+      alert("Внеси ги сите информации!");
+    }
+  }
+
+  // Load при start
+  window.addEventListener('load', loadSupplements);
+
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const navLinks = document.getElementById('navLinks');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('nav-active');
+  });
+  document.addEventListener('click', function (e) {
+    if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+      navLinks.classList.remove('nav-active');
+      hamburger.classList.remove('active');
+    }
+  });
+
+
+
+
+
+
+
+  // Chart.js Progress
+  const ctx = document.getElementById('progressChart').getContext('2d');
+  const progressChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Ден 1', 'Ден 2', 'Ден 3', 'Ден 4', 'Ден 5'],
+      datasets: [{
+        label: 'Енергија',
+        data: [70, 75, 80, 78, 85],
+        borderColor: '#f5c518',
+        backgroundColor: 'rgba(245,197,24,0.2)',
+        tension: 0.4
+      }, {
+        label: 'Издржливост',
+        data: [60, 65, 70, 68, 72],
+        borderColor: '#d4af37',
+        backgroundColor: 'rgba(212,175,55,0.2)',
+        tension: 0.4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#f5c518' } } },
+      scales: {
+        y: { beginAtZero: true, ticks: { color: '#f5c518' } },
+        x: { ticks: { color: '#f5c518' } }
+      }
+    }
+  });
+
+  </script>
+</body>
+</html>
+
